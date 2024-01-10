@@ -106,23 +106,52 @@ export function IfYouGiveASeedAFertilizerPartTwo(input: string): number {
 
   let min = Infinity
   let chunks: [start: number, range: number][] = []
-  for (let i = 0; i < seeds.length; i += 2) {
+  for (let i = 0; i < 2; i += 2) {
     chunks.push([seeds[i], seeds[i + 1]])
   }
 
   for (let [start, range] of chunks) {
     for (const { lowerBound, upperBound, ranges } of lookup.values()) {
-      if (start < lowerBound || upperBound < start + range) continue
-      for (const { min, max, delta } of ranges) {
-        if (min <= start && start + range <= max) {
-          start += delta
-          continue
-        }
+      console.log(`chunk: ${start} - ${range} - ${start + range - 1}`)
+      console.log(`\tprocessing: ${lowerBound} - ${upperBound}`)
+      if (start + range - 1 < lowerBound || upperBound < start) {
+        console.log('\t\t===passthrough===')
+        continue
+      } else if (start < lowerBound && start + range - 1 < upperBound) {
+        const newChunk = [start, start - lowerBound]
+        start = lowerBound
+        console.log(newChunk)
+      } else if (lowerBound < start && upperBound < start + range - 1) {
+        const newChunk = [upperBound, start + range - 1 - upperBound]
+        range = upperBound - start
+        console.log(newChunk)
+      }
 
-        // if seeds span across the ranges
-        // we need to chunk it up by first modify the within range, then push another chunk to the chunks array
+      const splitedChunks = []
+      for (const { min, max, delta } of ranges) {
+        console.log(`\t\tproecssing range: ${min} - (${delta}) - ${max}`)
+
+        if (start + range - 1 < min || max < start) {
+          console.log('\t\t\t===passthrough===')
+          continue
+        } else if (start < max && max < start + range - 1) {
+          const newchunk = [max, start + range - 1 - max]
+          range = max - start + 1
+          console.log('\t\toriginal chunk', [start, range])
+          console.log('\t\tnewChunk: ', newchunk)
+        } else if (min <= lowerBound && max < start + range - 1) {
+          const newChunk = [max, start + range - 1 - max]
+          range = max - start
+          console.log(newChunk)
+        }
+        start += delta
       }
     }
+    min = Math.min(min, start)
+    console.log(`min: ${min}`)
   }
+
+  console.log(min)
+  console.log(chunks)
   return min
 }

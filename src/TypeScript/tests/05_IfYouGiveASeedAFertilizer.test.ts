@@ -18,7 +18,7 @@ describe('test 05_IfYouGiveASeedAFertilizer', () => {
   })
   test('part2', () => {
     const exampleResult = IfYouGiveASeedAFertilizerPartTwo(example)
-    // expect(exampleResult).toBe(46)
+    expect(exampleResult).toBe(46)
     // const result = IfYouGiveASeedAFertilizerPartTwo(input)
     // console.log(result)
   })
