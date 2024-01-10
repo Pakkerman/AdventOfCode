@@ -7,11 +7,18 @@ import {
 } from '@code/13_PointOfIncidence'
 
 describe('test 13_PointOfIncidence', () => {
-  test('part1', () => {
-    // const result = PointOfIncidencePartOne(input)
+  // test('part1', () => {
+  //   const result = PointOfIncidencePartOne(input)
+  //   expect(result).toBe(36015)
+  //   const exampleRes = PointOfIncidencePartOne(example)
+  //   expect(exampleRes).toBe(405)
+  // })
+  test('part2', () => {
+    // console.log('-- input test --')
+    // const result = PointOfIncidencePartTwo(input)
     // console.log(result)
-    const exampleRes = PointOfIncidencePartOne(example)
-    console.log(exampleRes)
+    console.log('-- example test --:')
+    const exampleRes = PointOfIncidencePartTwo(example)
+    expect(exampleRes).toBe(400)
   })
-  test('part2', () => {})
 })

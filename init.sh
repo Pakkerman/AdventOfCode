@@ -49,3 +49,5 @@ echo "# --- Day $1: $2 ---" > "$logDir/$1_$2.md"
 mkdir -p "$dir/data/day$1"
 touch "$dir/data/day$1/input_$2.txt"
 touch "$dir/data/day$1/example_$2.txt"
+
+
