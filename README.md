@@ -7,12 +7,12 @@ See [adventofcode.com](https://adventofcode.com/2023/) for details.
 ### 2023
 
 - [x] Day 01: Trebuchet?!
-- [ ] Day 02:
-- [ ] Day 03:
-- [ ] Day 04:
-- [ ] Day 05:
-- [ ] Day 06:
-- [ ] Day 07:
+- [x] Day 02:
+- [x] Day 03:
+- [x] Day 04:
+- [x] Day 05:
+- [x] Day 06: Wait For It
+- [ ] Day 07: Camel Cards
 - [ ] Day 08:
 - [ ] Day 09:
 - [ ] Day 10:
