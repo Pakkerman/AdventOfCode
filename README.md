@@ -12,8 +12,8 @@ See [adventofcode.com](https://adventofcode.com/2023/) for details.
 - [x] Day 04:
 - [x] Day 05:
 - [x] Day 06: Wait For It
-- [ ] Day 07: Camel Cards
-- [ ] Day 08:
+- [x] Day 07: Camel Cards
+- [ ] Day 08: Haunted Wasteland
 - [ ] Day 09:
 - [ ] Day 10:
 - [ ] Day 11:
