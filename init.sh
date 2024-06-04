@@ -35,12 +35,12 @@ import { $2PartOne, $2PartTwo } from '@code/$1_$2'
 
 describe('test $1_$2', () => {
   test('part1', () => {
-    expect($2PartOne(example).toBe(0))
-    expect($2PartOne(input).toBe(0))
+    expect($2PartOne(example)).toBe(0)
+    expect($2PartOne(input)).toBe(0)
   })
   test('part2', () => {
-    expect($2PartTwo(example).toBe(0))
-    expect($2PartTwo(input).toBe(0))
+    expect($2PartTwo(example)).toBe(0)
+    expect($2PartTwo(input)).toBe(0)
   })
 })
 " >"$dir/src/TypeScript/tests/$1_$2.test.ts"
