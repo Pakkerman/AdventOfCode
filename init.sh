@@ -14,9 +14,12 @@ touch "$TSDir/$1_$2.ts"
 
 [ -s $(echo "$TSDir/$1_$2.ts") ] ||
 	echo "// Day $1 $2
+// Part 1
 export function $2PartOne(input: string) {
-  
+  console.log(input)
 }
+
+// Part 2
 export function $2PartTwo(input: string) {
   
 }
