@@ -10,237 +10,136 @@
 
 // once find the same 2 line, see if it reach the edge. if not, rotate left and try again,
 
-export function PointOfIncidencePartOne(input: string) {
-  let horizontalSum = 0
-  let verticalSum = 0
-
-  // get pattern into a matrix
-  const inputSplit = input.split('\n')
-  // inputSplit.forEach((item, idx) => console.log(idx, item))
-  let matrix: string[] = []
-  for (let i = 0; i < inputSplit.length; i++) {
-    const row = inputSplit[i]
-    if (row.length) {
-      matrix.push(row)
-    } else {
-      const [type, count] = getCount(matrix)
-      console.log('return from get count', type, count)
-      if (type === 'vertical') verticalSum += count
-      if (type === 'horizontal') horizontalSum += count
-      matrix = []
+function parseInput(input: string): string[][] {
+  const patterns: string[][] = [];
+  const rows = input.trim().split("\n");
+  let curr: string[] = [];
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i] === "") {
+      patterns.push(curr);
+      curr = [];
+      continue;
     }
+
+    curr.push(rows[i]);
   }
 
-  return verticalSum + horizontalSum * 100
+  patterns.push(curr);
+  return patterns;
+}
 
-  function getCount(
-    matrix: string[]
-  ): [type: 'vertical' | 'horizontal', count: number] {
-    let verticalCount = 0
-    let horizontalCount = 0
-    let up = 0
-    let down = 0
+export function PointOfIncidencePartOne(input: string) {
+  const patterns = parseInput(input);
 
-    let cols = '# '
-    for (let i = 0; i < matrix[0].length; i++) cols += i.toString()
-    console.log(cols)
-    matrix.forEach((row, idx) => console.log(idx, row))
+  let total = 0;
+  for (let i = 0; i < patterns.length; i++) {
+    // if (i != 12) continue;
+    const pattern = patterns[i];
 
-    for (let i = 0; i < matrix.length; i++) {
-      if (matrix[i] !== matrix[i + 1]) continue
+    // console.log("\ncheck horz");
+    const vertical = findReflection(rotateLeft(pattern));
+    // console.log("\ncheck vert");
+    const horizontal = findReflection(pattern);
 
-      up = i
-      down = i + 1
-      while (matrix[up] === matrix[down]) {
-        up--
-        down++
-      }
+    total += vertical !== 0 ? horizontal : horizontal * 100;
+  }
 
-      console.log('hor', up, down)
-      if (up < 0 || matrix.length <= down) {
-        horizontalCount = Math.max(horizontalCount, i + 1)
-        return ['horizontal', horizontalCount]
-      }
+  console.log("total", total);
+
+  return total;
+
+  function findReflection(pattern: string[]): number {
+    for (let y = 0; y < pattern.length - 1; y++) {
+      let lo = y;
+      let hi = y + 1;
+      if (pattern[lo] !== pattern[hi]) continue;
+      if (lo === 0 || hi === pattern.length - 1) return y + 1;
+
+      do {
+        lo--;
+        hi++;
+      } while (pattern[lo] === pattern[hi]);
+
+      if (lo === -1 || hi === pattern.length) return y + 1;
     }
-
-    const rotated = rotateLeft(matrix)
-    cols = '# '
-    for (let i = 0; i < rotated[0].length; i++) cols += i.toString()
-    rotated.forEach((row, idx) => console.log(idx, row))
-
-    for (let i = 0; i < rotated.length; i++) {
-      if (rotated[i] !== rotated[i + 1]) continue
-
-      up = i
-      down = i + 1
-      while (rotated[up] === rotated[down]) {
-        up--
-        down++
-      }
-
-      if (up < 0 || rotated.length <= down) {
-        verticalCount = Math.max(verticalCount, i + 1)
-      }
-    }
-
-    return ['vertical', verticalCount]
+    return 0;
   }
 }
 
 export function PointOfIncidencePartTwo(input: string): number {
-  // maybe add a fixed boolean variable, and if
+  const patterns = parseInput(input);
 
-  let horizontalSum = 0
-  let verticalSum = 0
+  let total = 0;
+  for (let i = 0; i < patterns.length; i++) {
+    const pattern = patterns[i];
 
-  // get pattern into a matrix
-  const inputSplit = input.split('\n')
-  // inputSplit.forEach((item, idx) => console.log(idx, item))
-  let matrix: string[] = []
-  for (let i = 0; i < inputSplit.length; i++) {
-    const row = inputSplit[i]
-    if (row.length) {
-      matrix.push(row)
-    } else {
-      const [type, count] = getCount(matrix)
-      console.log('return from get count', type, count)
+    console.log("\n", i);
+    const horizontal = findReflection(pattern);
+    const vertical = findReflection(rotateLeft(pattern));
 
-      if (type === 'vertical') verticalSum += count
-      if (type === 'horizontal') horizontalSum += count
-      matrix = []
-    }
+    console.log(horizontal, vertical);
+
+    total += horizontal ? horizontal * 100 : vertical;
   }
 
-  return verticalSum + horizontalSum * 100
+  console.log("total", total);
 
-  function getCount(
-    matrix: string[]
-  ): [type: 'vertical' | 'horizontal', count: number] {
-    let verticalCount = 0
-    let horizontalCount = 0
-    let up = 0
-    let down = 0
+  return total;
 
-    let cols = '#  123456789ABCDEF'
-    console.log(cols)
-    matrix.forEach((row, idx) =>
-      console.log(idx.toString().padStart(2, '0'), row)
-    )
+  function findReflection(pattern: string[]): number {
+    pattern.forEach((item, idx) =>
+      console.log(idx.toString().padStart(2, "0"), item),
+    );
+    console.log();
 
-    let fixed = false
+    for (let y = 0; y < pattern.length - 1; y++) {
+      let diffCount = 0;
+      let lo = y;
+      let hi = y + 1;
 
-    console.log('check horz')
-    horizontalCount = checkPattern(matrix)
-    if (fixed) return ['horizontal', horizontalCount]
+      diffCount += countDiff(pattern[lo], pattern[hi]);
+      if (1 < diffCount) continue;
 
-    const rotated = rotateLeft(matrix)
-    console.log('check vert')
-    verticalCount = checkPattern(rotated)
-    return ['vertical', verticalCount]
-
-    console.log('return of checkPattern', horizontalCount, verticalCount)
-
-    function checkPattern(matrix: string[]): number {
-      for (let i = 0; i < matrix.length; i++) {
-        console.log(
-          'found adjacent line with smudge!',
-          hasSmudge(matrix[i], matrix[i + 1])
-        )
-        if (hasSmudge(matrix[i], matrix[i + 1])) {
-          return i + 1
-        }
-
-        if (matrix[i] !== matrix[i + 1]) continue
-
-        up = i
-        down = i + 1
-
-        while (matrix[up] === matrix[down]) {
-          up--
-          down++
-          fixed = hasSmudge(matrix[up], matrix[down])
-        }
-        console.log(fixed)
-        if (fixed) {
-          up--
-          down++
-        }
-
-        console.log('hor', up, down)
-        if (fixed && (up < 0 || matrix.length <= down)) {
-          horizontalCount = Math.max(horizontalCount, i + 1)
-          return i + 1
-        }
+      if (lo === 0 || hi === pattern.length - 1) {
+        if (diffCount === 0) continue;
+        return y + 1;
       }
+
+      console.log("here");
+      do {
+        lo--;
+        hi++;
+        if (lo === -1 || hi === pattern.length) {
+          if (diffCount != 1) break;
+          return y + 1;
+        }
+        diffCount += countDiff(pattern[lo], pattern[hi]);
+
+        console.log(diffCount);
+        console.log(lo.toString().padStart(2, "0"), pattern[lo]);
+        console.log(hi.toString().padStart(2, "0"), pattern[hi]);
+        console.log();
+      } while (diffCount <= 1);
     }
-
-    // console.log('rotated to check vertical: ')
-    // console.log(cols)
-    // const rotated = rotateLeft(matrix)
-    // rotated.forEach((row, idx) =>
-    //   console.log(idx.toString().padStart(2, '0'), row)
-    // )
-
-    // for (let i = 0; i < rotated.length; i++) {
-    //   let fixed = false
-
-    //   console.log(
-    //     'found adjacent line with smudge!',
-    //     hasSmudge(matrix[i], matrix[i + 1])
-    //   )
-    //   if (hasSmudge(matrix[i], matrix[i + 1])) {
-    //     return ['horizontal', i + 1]
-    //   }
-
-    //   if (rotated[i] !== rotated[i + 1]) continue
-
-    //   up = i
-    //   down = i + 1
-    //   while (rotated[up] === rotated[down]) {
-    //     up--
-    //     down++
-    //     fixed = hasSmudge(matrix[up], matrix[down])
-    //   }
-
-    //   console.log(fixed)
-    //   if (fixed) {
-    //     up--
-    //     down++
-    //   }
-
-    //   if (up < 0 || rotated.length <= down) {
-    //     verticalCount = Math.max(verticalCount, i + 1)
-    //   }
-    // }
-
-    // return ['vertical', verticalCount]
+    return 0;
   }
 }
 
-function hasSmudge(a: string, b: string): boolean {
-  if (!a || !b) return false
-  if (a === b) return false
-
-  console.log('\tfinding')
-  console.log('\t', a)
-  console.log('\t', b)
-
-  let findSmudge = false
+function countDiff(a: string, b: string): number {
+  let diff = 0;
   for (let i = 0; i < a.length; i++) {
-    if (a[i] === b[i]) continue
-    if (findSmudge) return false
-    findSmudge = true
+    if (a[i] === b[i]) continue;
+    diff++;
   }
-
-  return true
+  return diff;
 }
 
 function rotateLeft(matrix: string[]): string[] {
-  const out: string[] = Array.from({ length: matrix[0].length }, () => '')
+  const out: string[] = Array.from({ length: matrix[0].length }, () => "");
   for (let i = 0; i < matrix.length; i++) {
     for (let k = 0; k < matrix[i].length; k++) {
-      out[k] += matrix[i][k]
+      out[k] += matrix[i][k];
     }
   }
-  return out
+  return out;
 }
