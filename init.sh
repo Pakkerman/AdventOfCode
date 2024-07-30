@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # createing new files for challenge
-[ -z "$1" ] && echo "Usage [day] [name]" && exit 1
-[ -z "$2" ] && echo "Usage [day] [name]" && exit 1
+[ -z "$1" ] && echo "Usage: [day] [name in camel case]" && exit 1
+[ -z "$2" ] && echo "Usage: [day] [name in camel case]" && exit 1
 
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "$dir"
