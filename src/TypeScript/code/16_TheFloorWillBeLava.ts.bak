@@ -1,0 +1,340 @@
+// Day 16 TheFloorWillBeLava
+// Part 1
+
+// backslashes in the inputs has been replaced with "b"
+// to avoid problem with escaping characters
+function getInput(input: string): string[][] {
+  return input
+    .trim()
+    .split("\n")
+    .map((item) => item.split(""));
+}
+
+type Point = { x: number; y: number; dir: Dir };
+type Dir = [x: number, y: number];
+
+const left: Dir = [-1, 0];
+const right: Dir = [1, 0];
+const up: Dir = [0, -1];
+const down: Dir = [0, 1];
+
+export function TheFloorWillBeLavaPartOne(input: string[][]) {
+  const NORTH = 1;
+  const SOUTH = 2;
+  const WEST = 3;
+  const EAST = 4;
+  const map = [];
+
+  let width = 0;
+  let height = 0;
+
+  let tableNorth;
+  let tableSouth;
+  let tableWest;
+  let tableEast;
+
+  const beams = [createBeam(0, 0, EAST)];
+
+  main();
+
+  function main() {
+    processInput();
+
+    tableNorth = new Uint8Array(width * height);
+    tableSouth = new Uint8Array(width * height);
+    tableWest = new Uint8Array(width * height);
+    tableEast = new Uint8Array(width * height);
+
+    tableEast[0] = 1;
+
+    while (beams.length > 0) {
+      walk(beams[0]);
+    }
+
+    console.log("total is: ", sumTables());
+  }
+
+  function createBeam(
+    row: number,
+    col: number,
+    direction: number,
+  ): { row: number; col: number; direction: number } {
+    return { row: row, col: col, direction };
+  }
+
+  function processInput() {
+    const data = getInput(input);
+
+    height = data.length;
+    width = data[0].length;
+  }
+
+  function walk(beam: { row: number; col: number; direction: number }) {
+    updateBeamDirection(beam);
+
+    if (beam.direction == NORTH) beam.row -= 1;
+    if (beam.direction == SOUTH) beam.row += 1;
+    if (beam.direction == WEST) beam.col -= 1;
+    if (beam.direction == EAST) beam.col += 1;
+
+    if (beam.row < 0) {
+      beams.shift();
+      return;
+    }
+    if (beam.col < 0) {
+      beams.shift();
+      return;
+    }
+
+    if (beam.row > height - 1) {
+      beams.shift();
+      return;
+    }
+    if (beam.col > width - 1) {
+      beams.shift();
+      return;
+    }
+
+    const table = getTable(beam.direction);
+    const position = beam.row * width + beam.col;
+
+    if (table[position] != 0) {
+      beams.shift();
+      return;
+    }
+
+    table[position] = 1;
+  }
+
+  function updateBeamDirection(beam: {
+    row: number;
+    col: number;
+    direction: number;
+  }) {
+    const symbol = map[beam.row][beam.col];
+    if (symbol == ".") return;
+
+    if (symbol == "b") {
+      if (beam.direction == NORTH) {
+        beam.direction = WEST;
+        return;
+      }
+      if (beam.direction == SOUTH) {
+        beam.direction = EAST;
+        return;
+      }
+      if (beam.direction == EAST) {
+        beam.direction = SOUTH;
+        return;
+      }
+      if (beam.direction == WEST) {
+        beam.direction = NORTH;
+        return;
+      }
+    }
+    if (symbol == "/") {
+      if (beam.direction == NORTH) {
+        beam.direction = EAST;
+        return;
+      }
+      if (beam.direction == SOUTH) {
+        beam.direction = WEST;
+        return;
+      }
+      if (beam.direction == EAST) {
+        beam.direction = NORTH;
+        return;
+      }
+      if (beam.direction == WEST) {
+        beam.direction = SOUTH;
+        return;
+      }
+    }
+    if (symbol == "-") {
+      if (beam.direction == EAST) return;
+      if (beam.direction == WEST) return;
+
+      beam.direction = EAST;
+      beams.push(createBeam(beam.row, beam.col, WEST));
+    }
+
+    if (symbol == "|") {
+      if (beam.direction == NORTH) return;
+      if (beam.direction == SOUTH) return;
+
+      beam.direction = NORTH;
+      beams.push(createBeam(beam.row, beam.col, SOUTH));
+    }
+  }
+  function getTable(direction: number) {
+    if (direction == NORTH) return tableNorth;
+    if (direction == SOUTH) return tableSouth;
+    if (direction == WEST) return tableWest;
+    if (direction == EAST) return tableEast;
+  }
+
+  function sumTables() {
+    let sum = 0;
+    const off = width * height;
+    for (let n = 0; n < off; n++) {
+      if (
+        tableNorth[n] == 1 ||
+        tableEast[n] == 1 ||
+        tableSouth[n] == 1 ||
+        tableWest[n] == 1
+      ) {
+        sum += 1;
+      }
+    }
+    return sum;
+  }
+}
+
+// export function TheFloorWillBeLavaPartOne(input: string): number {
+//   const data = getInput(input);
+//   data.forEach((item) => console.log(item.join("")));
+//
+//   const queue: Point[] = getNext({ x: 0, y: 0, dir: right }, data);
+//   console.log(queue);
+//
+//   const seen = Array.from({ length: data.length }, () =>
+//     new Array(data[0].length).fill(false),
+//   );
+//
+//   while (queue.length) {
+//     // console.log(queue);
+//     const { x, y, dir } = queue.shift();
+//     const [xoffset, yoffset] = dir;
+//     const nextX = x + xoffset;
+//     const nextY = y + yoffset;
+//
+//     if (x < 0 || data.length[0] <= x) continue;
+//     if (y < 0 || data.length <= y) continue;
+//     seen[y][x] = true;
+//
+//     if (nextX < 0 || data.length[0] <= nextX) continue;
+//     if (nextY < 0 || data.length <= nextY) continue;
+//
+//     if (seen[y + yoffset][x + xoffset]) continue;
+//
+//     const next = data[y + yoffset][x + xoffset];
+//   }
+//   //   if (next === ".") {
+//   //     queue.push({ x: x + xoffset, y: y + yoffset, dir: dir });
+//   //   } else if (dir === right || dir === left) {
+//   //     if (next === "-") {
+//   //       queue.push({ x: x + xoffset, y: y + yoffset, dir: dir });
+//   //     } else if (next === "|") {
+//   //       queue.push({ x: x + xoffset, y: y + yoffset, dir: up });
+//   //       queue.push({ x: x + xoffset, y: y + yoffset, dir: down });
+//   //     } else if (next === "/") {
+//   //       if (dir === right)
+//   //         queue.push({ x: x + xoffset, y: y + yoffset, dir: up });
+//   //       if (dir === left)
+//   //         queue.push({ x: x + xoffset, y: y + yoffset, dir: down });
+//   //     } else if (next === "b") {
+//   //       if (dir === left)
+//   //         queue.push({ x: x + xoffset, y: y + yoffset, dir: up });
+//   //       if (dir === right)
+//   //         queue.push({ x: x + xoffset, y: y + yoffset, dir: down });
+//   //     }
+//   //   } else if (dir === up || dir === down) {
+//   //     if (next === "|") {
+//   //       queue.push({ x: x + xoffset, y: y + yoffset, dir: dir });
+//   //     } else if (next === "-") {
+//   //       queue.push({ x: x + xoffset, y: y + yoffset, dir: left });
+//   //       queue.push({ x: x + xoffset, y: y + yoffset, dir: right });
+//   //     } else if (next === "/") {
+//   //       if (dir === up)
+//   //         queue.push({ x: x + xoffset, y: y + yoffset, dir: right });
+//   //       if (dir === down)
+//   //         queue.push({ x: x + xoffset, y: y + yoffset, dir: left });
+//   //     } else if (next === "b") {
+//   //       if (dir === up)
+//   //         queue.push({ x: x + xoffset, y: y + yoffset, dir: left });
+//   //       if (dir === down)
+//   //         queue.push({ x: x + xoffset, y: y + yoffset, dir: right });
+//   //     }
+//   //   }
+//   // }
+//   //
+//   seen.forEach((item) =>
+//     console.log(item.map((item) => (item ? 1 : 0)).join("")),
+//   );
+//
+//   let t = 0;
+//   seen.forEach((row) =>
+//     row.forEach((col) => {
+//       if (col) t++;
+//     }),
+//   );
+//
+//   return t;
+// }
+
+function getNext(point: Point, grid: string[][]): Point[] {
+  const { x, y, dir } = point;
+  const [xoff, yoff] = dir;
+  const next: Point = { x: x + xoff, y: y + yoff, dir };
+
+  if (dir === up) {
+    switch (grid[next.y][next.x]) {
+      case "|":
+        return [next];
+      case "-":
+        return [
+          { ...next, dir: left },
+          { ...next, dir: right },
+        ];
+      case "b":
+        return [{ ...next, dir: left }];
+      case "/":
+        return [{ ...next, dir: right }];
+    }
+  } else if (dir === down) {
+    switch (grid[next.y][next.x]) {
+      case "|":
+        return [next];
+      case "-":
+        return [
+          { ...next, dir: left },
+          { ...next, dir: right },
+        ];
+      case "b":
+        return [{ ...next, dir: right }];
+      case "/":
+        return [{ ...next, dir: left }];
+    }
+  } else if (dir === left) {
+    switch (grid[next.y][next.x]) {
+      case "|":
+        return [
+          { ...next, dir: up },
+          { ...next, dir: down },
+        ];
+      case "-":
+        return [next];
+      case "b":
+        return [{ ...next, dir: up }];
+      case "/":
+        return [{ ...next, dir: down }];
+    }
+  } else if (dir === right) {
+    switch (grid[next.y][next.x]) {
+      case "|":
+        return [
+          { ...next, dir: up },
+          { ...next, dir: down },
+        ];
+      case "-":
+        return [next];
+      case "b":
+        return [{ ...next, dir: down }];
+      case "/":
+        return [{ ...next, dir: up }];
+    }
+  }
+}
+
+// Part 2
+export function TheFloorWillBeLavaPartTwo(input: string) {}
