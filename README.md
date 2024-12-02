@@ -4,9 +4,13 @@ This is my personal solutions to Advent of Code 2023 with.
 
 See [adventofcode.com](https://adventofcode.com/2023/) for details.
 
+### 2024
+
+- [ ] [Day 01: Historian Hysteria](https://adventofcode.com/2024/day/1)
+
 ### 2023
 
-- [x] [Day01: Trebuchet?!](https://adventofcode.com/2023/day/1)
+- [x] [Day 01: Trebuchet?!](https://adventofcode.com/2023/day/1)
 - [x] [Day 02: Cube Conundrum](https://adventofcode.com/2023/day/2)
 - [x] [Day 03: Gear Ratios](https://adventofcode.com/2023/day/3)
 - [x] [Day 04: Scratchcards](https://adventofcode.com/2023/day/4)
