@@ -8,7 +8,7 @@ function parse(input: string): string[][] {
 export function partOne(input: string): number {
   const [pages, updates] = parse(input);
 
-  const pageMap: { number: number[] } = {};
+  const pageMap: Record<number, number[]> = {};
   for (let i = 0; i < pages.length; i++) {
     const [a, b] = pages[i].split("|");
 
@@ -59,7 +59,7 @@ function crossCheck(a: number[], b: number[]): boolean {
 export function partTwo(input: string): number {
   const [pages, updates] = parse(input);
 
-  const pageMap: { number: number[] } = {};
+  const pageMap: Record<number, number[]> = {};
   for (let i = 0; i < pages.length; i++) {
     const [a, b] = pages[i].split("|");
 
