@@ -1,4 +1,4 @@
-## Advent of Code 2023
+## Advent of Code
 
 This is my personal solutions to Advent of Code 2023 with.
 
